@@ -25,7 +25,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="jgoodies-forms-1.8" level="project" />
-    <orderEntry type="library" exported="" name="jgoodies-common-1.8" level="project" />
+    <orderEntry type="library" name="tkinter" level="project" />
   </component>
 </module>

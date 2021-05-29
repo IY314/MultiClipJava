@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="tkinter">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/tkinter.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/tkinter.jar!/" />
+    </SOURCES>
+  </library>
+</component>

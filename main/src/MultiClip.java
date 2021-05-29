@@ -1,77 +1,48 @@
+import tkinter.Master;
+import parser.Parser;
+import tkinter.widgets.*;
 import javax.swing.*;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-import parser.Parser;
-
 public class MultiClip {
-	private final Parser parser = new Parser();
-
-	private JPanel main;
-	private JPanel top;
-	private JButton exitButton;
-	private JButton clearInputButton;
-	private JButton clearOutputButton;
-	private JTextField consoleInput;
-	private JButton runButton;
-	private JTextArea consoleOutput;
-
-	public MultiClip() {
-		exitButton.addActionListener(e -> {
-			if ("exit".equals(e.getActionCommand())) {
-				System.exit(0);
-			}
-		});
-		clearInputButton.addActionListener(e -> {
-			if ("clearInput".equals(e.getActionCommand())) {
-				consoleInput.setText("");
-			}
-		});
-		clearOutputButton.addActionListener(e -> {
-			if ("clearOutput".equals(e.getActionCommand())) {
-				consoleOutput.setText("");
-			}
-		});
-		consoleInput.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				if ("\n".equals(String.valueOf(e.getKeyChar()))) {
-					try {
-						run();
-					} catch (IOException | UnsupportedFlavorException exception) {
-						exception.printStackTrace();
-					}
-				}
-			}
-		});
-		runButton.addActionListener(e -> {
-			try {
-				run();
-			} catch (IOException | UnsupportedFlavorException exception) {
-				exception.printStackTrace();
-			}
-		});
-	}
-
-	private void run() throws IOException, UnsupportedFlavorException {
-		String output = parser.parse(consoleInput.getText());
-		consoleInput.setText("");
-		if (output.equals("nap-Clear")) {
-			consoleOutput.setText("");
-		} else {
-			consoleOutput.append(output + "\n");
-		}
-	}
+	private static final Parser parser = new Parser();
+	private static final Master master = new Master();
+	private static Entry consoleInput;
+	private static Text consoleOutput;
 
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("MultiClip 1.0");
-		frame.setContentPane(new MultiClip().main);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
-		frame.pack();
-		frame.setVisible(true);
+		Button exitButton = new Button(master, "Exit", () -> System.exit(0));
+		consoleInput = new Entry(master);
+		consoleInput.bind("\n", MultiClip::run);
+		consoleOutput = new Text(master);
+		consoleOutput.setEditable();
+		Button clearInputButton = new Button(master, "Clear Input", () -> ((JTextField) consoleInput.component).setText(""));
+		Button clearOutputButton = new Button(master, "Clear Output", () -> ((JTextArea) consoleOutput.component).setText(""));
+		Button runButton = new Button(master, "Run", MultiClip::run);
+
+		exitButton.grid(0, 0);
+		clearInputButton.grid(0, 1);
+		clearOutputButton.grid(0, 2);
+		consoleInput.grid(0, 3);
+		runButton.grid(0, 4);
+		consoleOutput.grid(1, 0, 5, 1);
+		master.pack("MultiClip");
+	}
+
+	public static void run() {
+		String output = null;
+		try {
+			output = parser.parse(((JTextField) consoleInput.component).getText());
+		} catch (IOException | UnsupportedFlavorException e) {
+			e.printStackTrace();
+		}
+		((JTextField) consoleInput.component).setText("");
+		assert output != null;
+		if (output.equals("nap-Clear")) {
+			((JTextArea) consoleOutput.component).setText("");
+		} else {
+			((JTextArea) consoleOutput.component).append(output + "\n");
+		}
 	}
 }
